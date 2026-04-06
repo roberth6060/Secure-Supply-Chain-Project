@@ -138,11 +138,11 @@ function buildHomePageHtml() {
 function createApp() {
   const app = express();
 
-  // Basic hardening headers for the demo app.
+  // Set security headers on all responses to enforce hardening policies.
   app.use((req, res, next) => {
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "DENY");
-    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Content-Type-Options", "nosniff"); //  Prevents MIME sniffing, which can lead to content injection attacks.
+    res.setHeader("X-Frame-Options", "DENY"); // Prevents clickjacking by disallowing the page from being framed.
+    res.setHeader("Referrer-Policy", "no-referrer"); // Prevents information leakage by not sending referrer information to other sites.
     next();
   });
 

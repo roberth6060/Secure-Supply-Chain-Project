@@ -29,7 +29,7 @@ This repository is a working example for the self-guided study on software suppl
 | `LIBRARIES.md` | Per-library description and security rationale |
 | `SELF_GUIDED_STUDY_FINAL.md` | Full written study (Introduction, Advantages, Disadvantages, Working Example) |
 | `Secure_Supply_Chain_Final.docx` | Word document submission |
-| `Secure_Supply_Chain_Slides.pptx` | Presentation (10 slides, generated from `create_slides.py`) |
+| `Secure_Supply_Chain_Slides.pptx` | Presentation (12 slides) |
 
 ---
 
