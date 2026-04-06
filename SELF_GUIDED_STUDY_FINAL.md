@@ -168,6 +168,8 @@ Impact:
 2. Additional operational ownership.
 3. Need for ongoing updates as tools and advisories evolve.
 
+A real-world illustration of this overhead appears in multi-repository organizations. When GitHub Actions deprecated older runner environments or updated bundled tool versions, teams discovered that workflow files referencing those environments began failing silently or producing unexpected results. Organizations with dozens of repositories had to audit and update every workflow file manually. This maintenance burden is structural: every component in the CI pipeline — the Actions themselves, the Node.js version, the audit tool, and the underlying runner image — has its own release and deprecation cycle. Teams that do not actively own this maintenance surface will find their pipelines degrading over time as tool compatibility drift accumulates. The decision to adopt a CI security gate therefore carries an implicit long-term staffing and time commitment that is easy to overlook during initial setup.
+
 ### Disadvantage 2: Potential Slowdown in Development Velocity
 
 Security gates can slow development when builds fail frequently due to vulnerabilities, especially in legacy repositories with many outdated packages.
@@ -181,6 +183,8 @@ Impact:
 
 1. Friction in teams without clear remediation ownership.
 2. Tension between release deadlines and security policy.
+
+A concrete case arises in legacy Node.js projects. When `npm audit` is activated in CI on a codebase that has not been maintained for one to two years, it frequently surfaces ten or more high-severity findings simultaneously. Many of these involve transitive dependencies where there is no direct fix available — the only resolution is upgrading a direct dependency to a version that has already updated its own internal dependency tree. If that newer version introduces a breaking API change, the team must also absorb refactoring work simply to restore a passing pipeline. In the worst cases, the vulnerable package has been abandoned by its maintainer and will never receive a patch, leaving teams to choose between forking the dependency, finding an alternative, or carrying a formally documented exception. Each path requires engineering time that was not originally budgeted, directly demonstrating that retrospective security enforcement can carry a steep velocity cost that is entirely disconnected from the team's planned delivery schedule.
 
 ### Disadvantage 3: False Positives and Context Gaps
 
@@ -196,6 +200,8 @@ Impact:
 1. Alert fatigue if triage process is weak.
 2. Risk of ignoring important findings due to excessive noise.
 
+A practical example is the common scenario where `npm audit` flags a high-severity advisory against a package used exclusively in the development toolchain — such as a linter plugin or a test utility — that is never included in the production build. In this case, the advisory is technically accurate but practically irrelevant: the vulnerable code path cannot be reached by an attacker in a production environment. However, the CI gate still fails, blocking all team members from merging until the finding is resolved or explicitly overridden. Without a triage policy that distinguishes `devDependencies` from production `dependencies`, developers begin to treat the security gate as an obstacle rather than a protection. This attitude increases the risk that real, exploitable findings are dismissed with the same casual reaction as the noise. The behavioral consequence is itself a security problem, and it is not solved by adding more tooling — it requires governance, triage ownership, and a clear escalation policy, none of which `npm audit` provides automatically.
+
 ### Disadvantage 4: Cannot Fully Stop Trusted Insider or Maintainer Abuse
 
 A major limitation is that technical controls alone cannot eliminate all human trust risks. If a legitimate maintainer or privileged operator behaves maliciously, some attacks may bypass standard scanning checks.
@@ -205,6 +211,8 @@ Impact:
 1. Need for organizational controls (code review, access reviews, segregation of duties).
 2. Need for incident response readiness and monitoring.
 
+The 2024 XZ Utils backdoor is a particularly instructive case. A malicious contributor invested approximately two years building credibility within the XZ open-source project before introducing a carefully concealed backdoor in the library's build infrastructure. The malicious logic was embedded in auto-generated binary test files rather than in human-readable source code, making it invisible to standard code review and inaccessible to dependency scanners. At the time the backdoor was active, no CVE existed and no advisory database contained a matching entry. A project using `npm audit` or any equivalent advisory-based scanner would have reported zero vulnerabilities against the affected version. This incident defines the fundamental ceiling of automated scanning: it can only detect what has already been discovered, confirmed, and catalogued by the security community. A novel, well-concealed attack by a trusted contributor will pass these controls without triggering any alert.
+
 ### Disadvantage 5: Tool Lock-In and Platform Dependence
 
 Choosing one CI platform or one dependency scanner can create process coupling. Migrating later may require rework of policy scripts, permissions, and reporting structures.
@@ -213,6 +221,8 @@ Contrast:
 
 1. Single-platform implementation: Simpler short-term adoption.
 2. Multi-tool architecture: Better resilience but more engineering overhead.
+
+A team that has deeply integrated with GitHub Actions faces a specific form of lock-in that is easy to underestimate at adoption time. Platform-specific features — GitHub Environments for deployment approval gates, OIDC token exchange for passwordless cloud authentication with AWS or Azure, native GitHub secret management, and repository ruleset APIs — have no direct equivalents on competing platforms. If the organization later decides to migrate to GitLab CI, Bitbucket Pipelines, or a self-hosted Jenkins infrastructure, every workflow file must be rewritten from scratch in the target platform's YAML syntax, and every integration with external services must be re-established independently. Internal dashboards or reporting tools that consume the GitHub Actions API also become migration liabilities. For small teams, this coupling is reasonable given GitHub Actions' adoption rate and low setup cost. For larger organizations, the accumulated platform-specific surface area can represent months of migration effort, creating a cost barrier that effectively makes the original tooling choice permanent despite the team's future intentions.
 
 ### Personal Reflection on Disadvantages
 
