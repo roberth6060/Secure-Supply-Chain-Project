@@ -1,13 +1,14 @@
 {
   "name": "secure-supply-chain-demo",
   "version": "1.0.0",
-  "description": "",
+  "description": "Working example for ISTE.442.800 self-guided study: software supply chain security with npm audit and GitHub Actions CI enforcement.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "node --test"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["supply-chain-security", "npm-audit", "ci-cd", "express"],
+  "author": "Robert Haye",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
