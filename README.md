@@ -85,7 +85,7 @@ Fintech · SaaS platforms · Healthcare IT · Cloud-native product companies · 
 ## Submission Readiness Checklist
 
 - [x] `LIBRARIES.md` — per-library description and security rationale
-- [x] `Secure_Supply_Chain_Slides.pptx` — 10-slide presentation
+- [x] `Secure_Supply_Chain_Slides.pptx` — 12-slide presentation
 - [x] `Secure_Supply_Chain_Final.docx` — full Word document
 - [x] 7 passing tests (`npm test`)
 - [x] 0 high-severity vulnerabilities (`npm audit --audit-level=high`)
