@@ -91,3 +91,4 @@ Fintech · SaaS platforms · Healthcare IT · Cloud-native product companies · 
 - [x] 0 high-severity vulnerabilities (`npm audit --audit-level=high`)
 - [x] CI workflow enforces both gates on every push
 
+"express": "4.17.1"
